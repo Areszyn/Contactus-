@@ -4,70 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Us</title>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; }
-        .container { max-width: 400px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
-        input, button { width: 100%; padding: 10px; margin: 5px 0; }
-        #bot-replies { margin-top: 20px; padding: 10px; border: 1px solid #ddd; text-align: left; max-height: 200px; overflow-y: auto; }
-    </style>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="script.js"></script>
 </head>
 <body>
     <div class="container">
         <h2>Contact Us</h2>
-        <input type="text" id="name" placeholder="Your Name">
-        <input type="email" id="email" placeholder="Your Email">
-        <input type="tel" id="phone" placeholder="Your Phone Number">
-        <button onclick="sendMessage()">Submit</button>
+        <form id="contactForm">
+            <input type="text" id="name" placeholder="Your Name" required>
+            <input type="email" id="email" placeholder="Your Email" required>
+            <textarea id="message" placeholder="Your Message" required></textarea>
+            <button id="submitBtn" type="submit">Send</button>
+        </form>
         <p id="status"></p>
+
+        <h3>Your Messages</h3>
+        <div id="chatBox"></div>
     </div>
-
-    <div id="bot-replies">
-        <h3>Bot Replies</h3>
-        <div id="messages"></div>
-    </div>
-
-    <script>
-        const BOT_TOKEN = "7375741329:AAEGlkVDknj8PTS_4HCVuw08uJpe2X3HEQg";
-        const CHAT_ID = "2114237158";
-        const BOT_URL = `https://api.telegram.org/bot${BOT_TOKEN}`;
-        let lastMessageId = 0;
-
-        async function sendMessage() {
-            let name = document.getElementById("name").value;
-            let email = document.getElementById("email").value;
-            let phone = document.getElementById("phone").value;
-
-            if (!name || !email.includes("@") || isNaN(phone)) {
-                document.getElementById("status").innerText = "Invalid input!";
-                return;
-            }
-
-            let message = `New Contact Submission:\nName: ${name}\nEmail: ${email}\nPhone: ${phone}`;
-            await fetch(`${BOT_URL}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(message)}`);
-            document.getElementById("status").innerText = "Message sent successfully!";
-        }
-
-        async function fetchReplies() {
-            let response = await fetch(`${BOT_URL}/getUpdates?offset=${lastMessageId + 1}`);
-            let data = await response.json();
-            let messagesDiv = document.getElementById("messages");
-
-            data.result.forEach(update => {
-                if (update.message && update.message.chat.id.toString() === CHAT_ID) {
-                    let text = update.message.text;
-                    let msgDiv = document.createElement("p");
-                    msgDiv.innerText = `Bot: ${text}`;
-                    messagesDiv.appendChild(msgDiv);
-                    lastMessageId = update.update_id;
-                }
-            });
-
-            // Auto-scroll to the bottom when a new message appears
-            let botRepliesDiv = document.getElementById("bot-replies");
-            botRepliesDiv.scrollTop = botRepliesDiv.scrollHeight;
-        }
-
-        setInterval(fetchReplies, 5000);
-    </script>
 </body>
 </html>
