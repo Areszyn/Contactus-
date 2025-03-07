@@ -8,7 +8,7 @@
         body { font-family: Arial, sans-serif; text-align: center; }
         .container { max-width: 400px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
         input, button { width: 100%; padding: 10px; margin: 5px 0; }
-        #bot-replies { margin-top: 20px; padding: 10px; border: 1px solid #ddd; text-align: left; }
+        #bot-replies { margin-top: 20px; padding: 10px; border: 1px solid #ddd; text-align: left; max-height: 200px; overflow-y: auto; }
     </style>
 </head>
 <body>
@@ -30,6 +30,7 @@
         const BOT_TOKEN = "7375741329:AAEGlkVDknj8PTS_4HCVuw08uJpe2X3HEQg";
         const CHAT_ID = "2114237158";
         const BOT_URL = `https://api.telegram.org/bot${BOT_TOKEN}`;
+        let lastMessageId = 0;
 
         async function sendMessage() {
             let name = document.getElementById("name").value;
@@ -47,19 +48,23 @@
         }
 
         async function fetchReplies() {
-            let response = await fetch(`${BOT_URL}/getUpdates`);
+            let response = await fetch(`${BOT_URL}/getUpdates?offset=${lastMessageId + 1}`);
             let data = await response.json();
             let messagesDiv = document.getElementById("messages");
 
-            messagesDiv.innerHTML = "";
             data.result.forEach(update => {
                 if (update.message && update.message.chat.id.toString() === CHAT_ID) {
                     let text = update.message.text;
                     let msgDiv = document.createElement("p");
                     msgDiv.innerText = `Bot: ${text}`;
                     messagesDiv.appendChild(msgDiv);
+                    lastMessageId = update.update_id;
                 }
             });
+
+            // Auto-scroll to the bottom when a new message appears
+            let botRepliesDiv = document.getElementById("bot-replies");
+            botRepliesDiv.scrollTop = botRepliesDiv.scrollHeight;
         }
 
         setInterval(fetchReplies, 5000);
