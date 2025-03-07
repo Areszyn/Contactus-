@@ -14,13 +14,21 @@
             width: 80%;
             padding: 10px;
             margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
         }
         button {
             padding: 10px 20px;
             background: blue;
             color: white;
             border: none;
+            border-radius: 4px;
             cursor: pointer;
+        }
+        button:disabled {
+            background: grey;
+            cursor: not-allowed;
         }
         #messages {
             margin-top: 20px;
@@ -28,13 +36,20 @@
             overflow-y: auto;
             border: 1px solid #ccc;
             padding: 10px;
+            border-radius: 4px;
+            text-align: left;
         }
         .message {
             background: #f1f1f1;
             padding: 10px;
-            margin: 5px;
+            margin: 5px 0;
             border-radius: 5px;
-            text-align: left;
+        }
+        .message.user {
+            background: #d1e7dd;
+        }
+        .message.bot {
+            background: #f8d7da;
         }
     </style>
 </head>
@@ -42,15 +57,22 @@
 
     <h1>Contact Us</h1>
 
-    <input type="text" id="name" placeholder="Your Name" value="Sushanta Bhandari">
-    <input type="email" id="email" placeholder="Your Email">
-    <textarea id="message" placeholder="Your Message"></textarea>
-    <button onclick="sendMessage()">Send</button>
+    <form id="contactForm">
+        <input type="text" id="name" placeholder="Your Name" value="Sushanta Bhandari" required>
+        <input type="email" id="email" placeholder="Your Email" required>
+        <textarea id="message" placeholder="Your Message" required></textarea>
+        <button type="submit" id="sendButton">Send</button>
+    </form>
 
     <h2>Your Messages</h2>
     <div id="messages"></div>
 
     <script>
+        document.getElementById("contactForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            sendMessage();
+        });
+
         function sendMessage() {
             let name = document.getElementById("name").value;
             let email = document.getElementById("email").value;
@@ -65,7 +87,7 @@
 
             // Add user message
             let userMsg = document.createElement("div");
-            userMsg.classList.add("message");
+            userMsg.classList.add("message", "user");
             userMsg.textContent = `${name}: ${message}`;
             messagesDiv.appendChild(userMsg);
 
@@ -74,16 +96,18 @@
 
             // Clear input field
             document.getElementById("message").value = "";
+            document.getElementById("sendButton").disabled = true;
 
             // Simulate bot reply after 2 seconds
             setTimeout(() => {
                 let botMsg = document.createElement("div");
-                botMsg.classList.add("message");
+                botMsg.classList.add("message", "bot");
                 botMsg.textContent = "Bot: Thank you for reaching out! We will respond soon.";
                 messagesDiv.appendChild(botMsg);
 
                 // Auto-scroll again
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                document.getElementById("sendButton").disabled = false;
             }, 2000);
         }
     </script>
