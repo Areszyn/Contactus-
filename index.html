@@ -4,22 +4,89 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Us</title>
-    <link rel="stylesheet" href="styles.css">
-    <script defer src="script.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        input, textarea {
+            width: 80%;
+            padding: 10px;
+            margin: 5px 0;
+        }
+        button {
+            padding: 10px 20px;
+            background: blue;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #messages {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        .message {
+            background: #f1f1f1;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            text-align: left;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Contact Us</h2>
-        <form id="contactForm">
-            <input type="text" id="name" placeholder="Your Name" required>
-            <input type="email" id="email" placeholder="Your Email" required>
-            <textarea id="message" placeholder="Your Message" required></textarea>
-            <button id="submitBtn" type="submit">Send</button>
-        </form>
-        <p id="status"></p>
 
-        <h3>Your Messages</h3>
-        <div id="chatBox"></div>
-    </div>
+    <h1>Contact Us</h1>
+
+    <input type="text" id="name" placeholder="Your Name" value="Sushanta Bhandari">
+    <input type="email" id="email" placeholder="Your Email">
+    <textarea id="message" placeholder="Your Message"></textarea>
+    <button onclick="sendMessage()">Send</button>
+
+    <h2>Your Messages</h2>
+    <div id="messages"></div>
+
+    <script>
+        function sendMessage() {
+            let name = document.getElementById("name").value;
+            let email = document.getElementById("email").value;
+            let message = document.getElementById("message").value;
+
+            if (!name || !email || !message) {
+                alert("All fields are required!");
+                return;
+            }
+
+            let messagesDiv = document.getElementById("messages");
+
+            // Add user message
+            let userMsg = document.createElement("div");
+            userMsg.classList.add("message");
+            userMsg.textContent = `${name}: ${message}`;
+            messagesDiv.appendChild(userMsg);
+
+            // Auto-scroll to the latest message
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+            // Clear input field
+            document.getElementById("message").value = "";
+
+            // Simulate bot reply after 2 seconds
+            setTimeout(() => {
+                let botMsg = document.createElement("div");
+                botMsg.classList.add("message");
+                botMsg.textContent = "Bot: Thank you for reaching out! We will respond soon.";
+                messagesDiv.appendChild(botMsg);
+
+                // Auto-scroll again
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }, 2000);
+        }
+    </script>
+
 </body>
 </html>
